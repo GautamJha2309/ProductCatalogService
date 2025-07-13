@@ -7,23 +7,31 @@ import com.employeemanagementapplication.productcatalogservice.Services.IProduct
 import com.employeemanagementapplication.productcatalogservice.dtos.CategoryDto;
 import com.employeemanagementapplication.productcatalogservice.dtos.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 //@RestController = @Controller + @ResponseBody
 // https://www.baeldung.com/spring-bean-scopes
 @RestController
 public class ProductController {
 
+
+    //@Qualifier("StorageProductService")
     @Autowired
     IProductService productService;
 
     @GetMapping("/products")
     public List<Product> getAllProducts(){
-        return null;
+        //return productService.getAllProducts();
+        List<Product> products = productService.getAllProducts();
+        return products.stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     //Read for @PathVariable , @RequestParam and @QueryParam
@@ -56,6 +64,11 @@ public class ProductController {
         if(output == null) { throw new IllegalArgumentException("Invalid product id"); }
         return from(output);
     }
+
+//    @GetMapping("/limitedProduct/{limit}")
+//    public List<ProductDto> getLimitedProducts(int limit) {
+//        return productService.getAllProductsByLimit(limit);
+//    }
 
     @GetMapping("/test")
     public String test(){
